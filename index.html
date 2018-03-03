@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="./assets/css/main.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
   <div class="container-fluid">
@@ -143,9 +144,9 @@
           </div>
           <div class="card-body">
             <ul class="list-group list-group-flush">
-              <li class="list-group-item">Blockchain Height: </li>
-              <li class="list-group-item">Block Reward: </li>
-              <li class="list-group-item">Current Price: </li>
+              <li class="list-group-item">Blockchain Height: <a id="block-height"></a></li>
+              <li class="list-group-item">Block Reward: <a id="block-reward"></a></li>
+              <li class="list-group-item">Current Price: <a id="trtl-price"></a></li>
               <li class="list-group-item">Current Marketcap: </li>
             </ul>
           </div>
@@ -252,5 +253,6 @@
       </div>
     </div>
   </div>
+  <script src="./assets/javascript/main.js"></script>
  </body>
 </html>
