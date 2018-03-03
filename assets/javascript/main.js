@@ -29,10 +29,37 @@ function turtlePrice(){
   }).then(function (response) {
       var obj = JSON.parse(response);
       var price = obj.price;
-      $("#trtl-price").text(price +" BTC");
+      $("#trtl-price").text(price);
+  });  
+}
+
+function turtleMarketCap(){
+  var queryURL = "https://tradeogre.com/api/v1/ticker/btc-trtl";
+  var supplyURL = "https://blocks.turtle.link/q/supply/";
+  var price = 0;
+  var supply = 0;
+
+  $.ajax({
+    url: queryURL,
+    method: "GET"
+  }).then(function (response) {
+      var obj = JSON.parse(response);
+      price = obj.price;
+      var marketcap = (supply * price);
+      var mcapString = marketcap.toString();
+      var mcapRound = mcapString.slice(0,6);
+      $("#trtl-mcap").text(mcapRound + " BTC");
+  });  
+
+  $.ajax({
+    url: supplyURL,
+    method: "GET"
+  }).then(function (response) {
+    supply = response;
   });  
 }
 
 turtleHeight();
 turtleReward();
 turtlePrice();
+turtleMarketCap();
