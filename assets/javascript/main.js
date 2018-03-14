@@ -1,3 +1,6 @@
+//////////////////////////////////////    |||      FUNCTIONS      |||    ////////////////////////////////////////////////////////////
+
+//Pulls and displays blockchain height of turtlecoin
 function turtleHeight() {
   var queryURL = "https://blocks.turtle.link/q/height/";
   
@@ -9,6 +12,7 @@ function turtleHeight() {
   });  
 }
 
+//Pulls and displays the block reward for turtlecoin
 function turtleReward() {
   var queryURL = "https://blocks.turtle.link/q/reward/";
   
@@ -20,6 +24,7 @@ function turtleReward() {
   });  
 }
 
+//Pulls and displays the price (IN SATOSHIS) of turtlecoin
 function turtlePrice(){
   var queryURL = "https://tradeogre.com/api/v1/ticker/btc-trtl"
 
@@ -33,6 +38,7 @@ function turtlePrice(){
   });  
 }
 
+//Pulls both the price and and circulating supply of turtlecoin then multiplies these and displays them
 function turtleMarketCap(){
   var queryURL = "https://tradeogre.com/api/v1/ticker/btc-trtl";
   var supplyURL = "https://blocks.turtle.link/q/supply/";
@@ -58,6 +64,10 @@ function turtleMarketCap(){
     supply = response;
   });  
 }
+
+//////////////////////////////////////   |||      PROGRAM BODY       |||    ////////////////////////////////////////////////////////////
+
+// Call all the functions related to general information
 
 turtleHeight();
 turtleReward();
