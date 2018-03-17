@@ -68,7 +68,7 @@ function turtleMarketCap(){
 //////////////////////////////////////   |||      PROGRAM BODY       |||    ////////////////////////////////////////////////////////////
 
 // Call all the functions related to general information
-
+  
 turtleHeight();
 turtleReward();
 turtlePrice();
