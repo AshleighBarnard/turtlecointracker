@@ -65,6 +65,37 @@ function turtleMarketCap(){
   });  
 }
 
+function githubCall(){
+
+  var queryCall =  ' { repository(owner:"turtlecoin",name:"turtlecoin") { mentionableUsers  {totalCount} stargazers{totalCount} pullRequests(last:55){nodes {commits{totalCount}} totalCount}}}';
+
+  $.ajax({
+    method: "POST",
+    url: 'https://api.github.com/graphql',
+    contentType: 'application/json',
+    headers: {
+      Authorization: "bearer 560e9778d5ee525332ba0d6af8a50ed01906aa30"
+    },
+    data: JSON.stringify({ "query": queryCall })
+    
+  }).done(function(response) {
+    
+    console.log(response);
+    var turtle = response.data.repository;
+
+    var starsCount = turtle.stargazers.totalCount;
+    var watchers
+    var forks
+    var mergedPRs
+    var issues
+    var closedIssues
+    var contributorCount = turtle.mentionableUsers.totalCount;
+    var avgMergePrTime 
+  });
+}
+
+//token: 560e9778d5ee525332ba0d6af8a50ed01906aa30
+
 //////////////////////////////////////   |||      PROGRAM BODY       |||    ////////////////////////////////////////////////////////////
 
 // Call all the functions related to general information
@@ -73,3 +104,4 @@ turtleHeight();
 turtleReward();
 turtlePrice();
 turtleMarketCap();
+githubCall();
