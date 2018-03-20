@@ -67,21 +67,35 @@ function turtleMarketCap(){
 
 function githubCall(){
 
-  var queryCall =  ' { repository(owner:"turtlecoin",name:"turtlecoin") { mentionableUsers  {totalCount} stargazers{totalCount} pullRequests(last:55){nodes {commits{totalCount}} totalCount}}}';
+  var queryCall =   '{ repository(owner:"turtlecoin",name:"turtlecoin") { mentionableUsers  {totalCount} stargazers{totalCount} pullRequests(last:1){nodes{comments(last:1){nodes{author{login  avatarUrl(size:50)} body url}}} totalCount}}}'
 
   $.ajax({
     method: "POST",
     url: 'https://api.github.com/graphql',
     contentType: 'application/json',
     headers: {
-      Authorization: "bearer 560e9778d5ee525332ba0d6af8a50ed01906aa30"
+      Authorization: "bearer 860a774de3c00321eb0cc9c6e4ea7cc283a09662"
     },
     data: JSON.stringify({ "query": queryCall })
     
   }).done(function(response) {
-    
     console.log(response);
     var turtle = response.data.repository;
+    //console.log(turtle);
+
+    var latest = turtle.pullRequests.nodes[0].comments.nodes[0]
+  
+    var commentBody = latest.body;
+    var link = latest.url
+    var avatar = latest.author.avatarUrl;
+    var name = latest.author.login;
+
+    console.log(name)
+    
+    $("#author-avatar").attr("src",avatar);
+    $("#author-name").text(name);
+    $("#comment-body").text(commentBody);
+    $("#comment-link").attr("href",link);
 
     var starsCount = turtle.stargazers.totalCount;
     var watchers
@@ -99,9 +113,17 @@ function githubCall(){
 //////////////////////////////////////   |||      PROGRAM BODY       |||    ////////////////////////////////////////////////////////////
 
 // Call all the functions related to general information
-  
-turtleHeight();
-turtleReward();
-turtlePrice();
-turtleMarketCap();
-githubCall();
+
+$(document).ready(function() {
+  turtleHeight();
+  turtleReward();
+  turtlePrice();
+  turtleMarketCap();
+  githubCall();
+
+  $('#fullpage').fullpage({
+    anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
+    menu: '#menu',
+    continuousVertical: true
+  });
+});
