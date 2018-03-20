@@ -20,7 +20,7 @@ function turtleReward() {
     url: queryURL,
     method: "GET"
   }).then(function (response) {
-      $("#block-reward").text(response + " TRTLs");
+      $("#block-reward").text(response + " Turtlecoins");
   });  
 }
 
@@ -34,7 +34,7 @@ function turtlePrice(){
   }).then(function (response) {
       var obj = JSON.parse(response);
       var price = obj.price;
-      $("#trtl-price").text(price);
+      $("#trtl-price").text(price + " Satoshis");
   });  
 }
 
@@ -65,50 +65,110 @@ function turtleMarketCap(){
   });  
 }
 
+function turtleHash(){
+  var queryURL = "https://blocks.turtle.link/q/hashrate/";
+
+  $.ajax({
+    url: queryURL,
+    method: "GET"
+  }).then(function (response) {
+      var hashrate = response
+      var megaHash = hashrate / 1000000;
+      var megaHashString = megaHash.toString();
+      var megaHashRound = megaHashString.slice(0,5);
+      $("#hashrate").text(megaHashRound + " mH/s");
+  });  
+}
+
 function githubCall(){
 
-  var queryCall =   '{ repository(owner:"turtlecoin",name:"turtlecoin") { mentionableUsers  {totalCount} stargazers{totalCount} pullRequests(last:1){nodes{comments(last:1){nodes{author{login  avatarUrl(size:50)} body url}}} totalCount}}}'
+  var queryCall =   '{ repository(owner:"turtlecoin",name:"turtlecoin") { mentionableUsers {totalCount} watchers {totalCount} issues(last:100) {nodes { author { avatarUrl(size:1000) login } body url title number closed }totalCount} forks {totalCount} stargazers{totalCount} pullRequests(last:100 states:MERGED){nodes{createdAt mergedAt} totalCount}}}'
 
   $.ajax({
     method: "POST",
     url: 'https://api.github.com/graphql',
     contentType: 'application/json',
     headers: {
-      Authorization: "bearer 860a774de3c00321eb0cc9c6e4ea7cc283a09662"
+      Authorization: "bearer e863e2bde5caa6de85248ed5ae1ee33aaee45050"
     },
     data: JSON.stringify({ "query": queryCall })
     
   }).done(function(response) {
-    console.log(response);
     var turtle = response.data.repository;
-    //console.log(turtle);
+    var length = turtle.issues.nodes.length;
+    var latest = turtle.issues.nodes[length-1];
+    var times = turtle.pullRequests.nodes;
 
-    var latest = turtle.pullRequests.nodes[0].comments.nodes[0]
+    var closedCount = 0;
+    
+    for(var i = 0; i<length; i++){
+      var isClosed = turtle.issues.nodes[i].closed;
+      if(isClosed){
+        closedCount++
+      }
+    }
+    
+    var timeMinutes = [];
+
+    var denominator = times.length;
+    for(var k = 0; k<denominator; k++){
+      var mergedTime = Date.parse(times[k].mergedAt);
+      var createdTime = Date.parse(times[k].createdAt);
+      var diffMinutes = (mergedTime - createdTime) / 1000 / 60;
+      timeMinutes.push(diffMinutes);
+    }
+    
+    var sum = 0;
+
+    for(var j = 0; j<denominator; j++){
+      sum+= timeMinutes[j];
+    }
+
+    var averageDays = sum / denominator / 60 / 24;
+    var averageDaysString = averageDays.toString();
+    var averageDaysRound = averageDaysString.slice(0,4);
   
     var commentBody = latest.body;
     var link = latest.url
     var avatar = latest.author.avatarUrl;
     var name = latest.author.login;
+    var title = latest.title;
+    var issueNumber = latest.number;
 
-    console.log(name)
-    
     $("#author-avatar").attr("src",avatar);
     $("#author-name").text(name);
     $("#comment-body").text(commentBody);
     $("#comment-link").attr("href",link);
+    $("#issue-title").text(title + " #" + issueNumber);
 
     var starsCount = turtle.stargazers.totalCount;
-    var watchers
-    var forks
-    var mergedPRs
-    var issues
-    var closedIssues
+    $("#stars").text(starsCount);
+    var watchers = turtle.watchers.totalCount;
+    $("#watchers").text(watchers);
+    var forks = turtle.forks.totalCount;
+    $("#forks").text(forks);
+    var mergedPRs = turtle.pullRequests.totalCount;
+    $("#merged").text(mergedPRs);
+    var issues = turtle.issues.totalCount;
+    $("#issues").text(issues);
+    $("#closed-issues").text(closedCount);
     var contributorCount = turtle.mentionableUsers.totalCount;
-    var avgMergePrTime 
+    $("#contributors").text(contributorCount);
+    $("#average-time").text(averageDaysRound + " Days");
   });
 }
 
-//token: 560e9778d5ee525332ba0d6af8a50ed01906aa30
+function redditSubs(){
+  $.ajax({
+    method: "GET",
+    url: 'https://www.reddit.com/r/TRTL/about',
+    headers: {
+      Authorization: "bearer JUs7QB7Tv7VmyApID8tutKOvJVs"
+    }
+  }).then(function (response) {
+    console.log(response);
+  });  
+}
 
 //////////////////////////////////////   |||      PROGRAM BODY       |||    ////////////////////////////////////////////////////////////
 
@@ -119,11 +179,13 @@ $(document).ready(function() {
   turtleReward();
   turtlePrice();
   turtleMarketCap();
+  turtleHash();
   githubCall();
+  redditSubs();
 
   $('#fullpage').fullpage({
-    anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
+    anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage',],
     menu: '#menu',
-    continuousVertical: true
+    continuousVertical: false
   });
 });
