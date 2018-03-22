@@ -89,7 +89,7 @@ function githubCall(){
     url: 'https://api.github.com/graphql',
     contentType: 'application/json',
     headers: {
-      Authorization: "bearer f7c7387bd8c0772c024ca2eac9036b62e2b65495"
+      Authorization: "bearer 62c3a5f473e1b741f0c8e50aad5a25aa8b1ad5da"
     },
     data: JSON.stringify({ "query": queryCall })
     
