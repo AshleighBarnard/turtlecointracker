@@ -89,7 +89,7 @@ function githubCall(){
     url: 'https://api.github.com/graphql',
     contentType: 'application/json',
     headers: {
-      Authorization: "bearer 2dfd5779620a72b35d94843617ab5fe7e4d62c2b"
+      Authorization: "bearer 062a670477785b639c6255d3adbd4f0a3dde82ce"
     },
     data: JSON.stringify({ "query": queryCall })
     
@@ -215,7 +215,7 @@ $(document).ready(function() {
   redditComments();
 
   $('#fullpage').fullpage({
-    anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage',],
+    anchors: ['Latest-Issue', 'Dev-Metrics', 'General', 'Social-Media',],
     menu: '#menu',
     continuousVertical: false
   });
