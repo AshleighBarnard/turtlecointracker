@@ -89,7 +89,7 @@ function githubCall(){
     url: 'https://api.github.com/graphql',
     contentType: 'application/json',
     headers: {
-      Authorization: "bearer edaeb8db744d0804771c52391d111af26692b66a"
+      Authorization: "bearer 2dfd5779620a72b35d94843617ab5fe7e4d62c2b"
     },
     data: JSON.stringify({ "query": queryCall })
     
@@ -130,7 +130,7 @@ function githubCall(){
   
     var commentBody = latest.body;
     var words = commentBody.split(" ");
-    if(words.length < 30){
+    if(words.length > 30){
       var shortenedWords = [];
       for(var l = 0; l<30 ; l++){
         shortenedWords.push(words[l]);
