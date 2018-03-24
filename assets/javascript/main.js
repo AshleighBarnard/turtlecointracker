@@ -89,7 +89,7 @@ function githubCall(){
     url: 'https://api.github.com/graphql',
     contentType: 'application/json',
     headers: {
-      Authorization: "bearer 62c3a5f473e1b741f0c8e50aad5a25aa8b1ad5da"
+      Authorization: "bearer edaeb8db744d0804771c52391d111af26692b66a"
     },
     data: JSON.stringify({ "query": queryCall })
     
@@ -129,6 +129,18 @@ function githubCall(){
     var averageDaysRound = averageDaysString.slice(0,4);
   
     var commentBody = latest.body;
+    var words = commentBody.split(" ");
+    if(words.length < 30){
+      var shortenedWords = [];
+      for(var l = 0; l<30 ; l++){
+        shortenedWords.push(words[l]);
+      }
+      var newBody = shortenedWords.join(" ");
+      $("#comment-body").text(newBody + " ...");
+    }else{
+      $("#comment-body").text(commentBody);
+    }
+
     var link = latest.url
     var avatar = latest.author.avatarUrl;
     var name = latest.author.login;
@@ -137,7 +149,6 @@ function githubCall(){
 
     $("#author-avatar").attr("src",avatar);
     $("#author-name").text(name);
-    $("#comment-body").text(commentBody);
     $("#comment-link").attr("href",link);
     $("#issue-title").text(title + " #" + issueNumber);
 
@@ -158,17 +169,36 @@ function githubCall(){
   });
 }
 
-function redditSubs(){
+function redditUsers(){
   $.ajax({
     method: "GET",
-    url: 'https://www.reddit.com/r/TRTL/about',
-    headers: {
-      Authorization: "bearer JUs7QB7Tv7VmyApID8tutKOvJVs"
-    }
+    url: 'https://www.reddit.com/r/TRTL/about.json?json='
   }).then(function (response) {
-    console.log(response);
+    var data = response.data;
+    var subs = data.subscribers;
+    var activeUsers = data.active_user_count;
+    $("#subscribers").text(subs);
+    $("#users-online").text(activeUsers);
   });  
 }
+
+function redditComments(){
+  $.ajax({
+    method: "GET",
+    url: 'https://www.reddit.com/r/TRTL.json?json='
+  }).then(function (response) {
+    var posts = response.data.children;
+    var sum = 0
+    for(var i = 0; i<posts.length; i++){
+      sum += posts[i].data.num_comments;
+    }
+    var average = sum / posts.length 
+    var averageString = average.toString();
+    var averageRound = averageString.slice(0,4);
+    $("#average-comments").text(averageRound);
+  });  
+}
+
 
 //////////////////////////////////////   |||      PROGRAM BODY       |||    ////////////////////////////////////////////////////////////
 
@@ -181,7 +211,8 @@ $(document).ready(function() {
   turtleMarketCap();
   turtleHash();
   githubCall();
-  redditSubs();
+  redditUsers();
+  redditComments();
 
   $('#fullpage').fullpage({
     anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage',],
