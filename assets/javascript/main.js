@@ -33,8 +33,12 @@ function turtlePrice(){
     method: "GET"
   }).then(function (response) {
       var obj = JSON.parse(response);
-      var price = obj.price;
-      $("#trtl-price").text(price + " Satoshis");
+      var price = obj.price * 100000000;
+      if (price == 1){
+        $("#trtl-price").text(price + " Satoshi");
+      }else{
+        $("#trtl-price").text(price + " Satoshis");
+      }
   });  
 }
 
