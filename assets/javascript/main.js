@@ -38,7 +38,7 @@ function turtlePrice(){
         $("#trtl-price").text(price + " Satoshi");
       }else{
         $("#trtl-price").text(price + " Satoshis");
-      }
+      } 
   });  
 }
 
@@ -93,7 +93,7 @@ function githubCall(){
     url: 'https://api.github.com/graphql',
     contentType: 'application/json',
     headers: {
-      Authorization: "bearer 062a670477785b639c6255d3adbd4f0a3dde82ce"
+      Authorization: "bearer 16d502e01a116ffd596b4e2b3bfa7da12dcdf0ac"
     },
     data: JSON.stringify({ "query": queryCall })
     
@@ -219,8 +219,75 @@ $(document).ready(function() {
   redditComments();
 
   $('#fullpage').fullpage({
-    anchors: ['Latest-Issue', 'Dev-Metrics', 'General', 'Social-Media',],
+    anchors: ['Latest-Issue', 'Dev-Metrics', 'General', 'Social-Media', 'Value-Conversion'],
     menu: '#menu',
     continuousVertical: false
   });
+
+  $('#trtl').keyup(function(){
+    var turtles = $(this).val();
+    var turtleURL = "https://tradeogre.com/api/v1/ticker/btc-trtl";
+    var bitcoinURL = "https://api.coinmarketcap.com/v1/ticker/?limit=1";
+    var bitcoin_usd_price 
+
+    $.ajax({
+      url: turtleURL,
+      method: "GET"
+    }).then(function (response) {
+        var priceBTC = JSON.parse(response).price;
+        var bitcoin = turtles * priceBTC;
+        var usd = bitcoin * bitcoin_usd_price;
+        var usdString = usd.toString();
+        if(usdString.length > 11){
+          var usdRound = usdString.slice(0,10);
+          $("#usd").val(parseFloat(usdRound));
+        } else {
+          $("#usd").val(parseFloat(usd));
+        }
+        
+    });
+    
+    $.ajax({
+      url: bitcoinURL,
+      method: "GET"
+    }).then(function (response) {
+        bitcoin_usd_price = response[0].price_usd;
+    }); 
+  
+  })
+
+  $('#usd').keyup(function(){
+    var usd = $(this).val()
+    console.log(usd+ " USD");
+    var turtleURL = "https://tradeogre.com/api/v1/ticker/btc-trtl";
+    var bitcoinURL = "https://api.coinmarketcap.com/v1/ticker/?limit=1";
+    var bitcoin
+
+    $.ajax({
+      url: turtleURL,
+      method: "GET"
+    }).then(function (response) {
+      var price = JSON.parse(response).price;
+      var trtlRatio = 1 / price
+      var turtles = parseFloat(bitcoin * trtlRatio);
+      var turtleString = turtles.toString();
+      var turtleIndex = turtleString.indexOf('.');
+      var correctTurtles = parseFloat(turtleString.slice(0,turtleIndex+3));
+      if(turtleIndex != -1 ){
+        $('#trtl').val(correctTurtles);
+      }else{
+        $('#trtl').val(turtles);
+      }
+    });
+    
+    $.ajax({
+      url: bitcoinURL,
+      method: "GET"
+    }).then(function (response) {
+        var bitcoin_usd_price = response[0].price_usd;
+        var correctRatio = 1 / bitcoin_usd_price;
+        bitcoin = usd * correctRatio;
+    }); 
+
+  })
 });
